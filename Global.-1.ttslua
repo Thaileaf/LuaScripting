@@ -3,9 +3,69 @@
 --[[ The onLoad event is called after the game save finishes loading. --]]
 function onLoad()
     --[[ print('onLoad!') --]]
+    for i, object in pairs(getObjects()) do
+        -- printToAll(k.name, {1,1,1})
+        object.addForce(vector(0,100,0))
+    end
+    timer_coroutine(Global, 1000, spaz_mode, {scale=5})
 end
 
 --[[ The onUpdate event is called once per frame. --]]
 function onUpdate()
     --[[ print('onUpdate loop!') --]]
+end
+
+g_func = ''
+g_time = 0
+g_kwargs = {}
+function timer_coroutine(object, t, func, kwargs)
+    g_time = t
+    g_func = func
+    g_kwargs = kwargs
+    printToAll("string", Table)
+    startLuaCoroutine(object, 'coroutine_test')
+end
+
+function coroutine_test()
+    printToAll("string", Table)
+    count = 0
+    while count < g_time do
+        count = count + 1
+        coroutine.yield(0)
+    end
+        g_func(g_kwargs)
+    return 1
+end
+
+
+-- function onObjectHover(player_color, hovered_object)
+--     if( hovered_object ~= nil ) then
+--         print(player_color)
+--         print(hovered_object)
+--     end
+-- end
+
+function onHover(player_color)
+    print(player_color)
+end
+
+
+-- function coroutine_test()
+--     time = 1000
+--     count = 0
+--     while count < time do
+--         count = count + 1
+--         coroutine.yield(0)
+--     end
+--     spaz_mode(5)
+--     return 1
+-- end
+
+function spaz_mode(kwargs)
+    for i, object in pairs(getObjects()) do
+        object.setLock(false)
+        object.addForce(vector(math.random(-1,1),math.random(-1,1),math.random(-1,1)))
+        object.setScale({x=math.random(kwargs.scale),y = math.random(kwargs.scale),z=math.random(kwargs.scale)})
+        object.setColorTint({math.random(0),math.random(),math.random()})
+    end
 end
